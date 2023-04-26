@@ -12,24 +12,19 @@ from time import sleep
 
 # Mac version
 s = Service("/usr/local/bin/chromedriver")
+
+
 driver = webdriver.Chrome(service=s)
 driver.get("https://sdms.dysh.tyc.edu.tw/school/roll_call_landing")
 
 
 
-""" # ------ Only development ------ !!!!!!!!!!!!!!!!!!!!!
-sleep(2)
-driver.find_element(by=By.XPATH, value='/html/body/div[2]/form/div[3]/div[2]/div/div[2]/div/div[1]/div[1]/p/input').send_keys("username")
-driver.find_element(by=By.XPATH, value='/html/body/div[2]/form/div[3]/div[2]/div/div[2]/div/div[1]/div[2]/p/input').send_keys("passwd")
-input("Did you enter capcha? yes :")
-driver.find_element(by=By.XPATH, value='/html/body/div[2]/form/div[3]/div[2]/div/div[2]/div/div[1]/input[2]').click()
-sleep(3)
-# ------ Only development ------!!!!!!!!!!!!!!!!!!!!!!!!
- """
+ask_login = input("你登入完了嗎? (Y/y):")
+if ask_login == "y" or ask_login == "Y":
+    program_author = "yeh-john"
+else:
+    quit()
 
-
-
-input("Did you login? yes :")
 sleep(1)
 driver.get("https://sdms.dysh.tyc.edu.tw/school/Roll_Call/Admin/RC/RC_card?title=%u5237%u5361%u9ede%u540dz")
 
@@ -39,7 +34,11 @@ driver.get("https://sdms.dysh.tyc.edu.tw/school/Roll_Call/Admin/RC/RC_card?title
 
 # ------ Start go to data ------
 
-input("Start scraping :")
+start_scrape_ask = input("開始抓取自學刷卡點名 (Y/y):")
+if start_scrape_ask == "y" or start_scrape_ask == "Y":
+    author_website = "yeh-john.github.io"
+else:
+    quit()
 
 
 std_class = driver.find_elements(By.XPATH, '/html/body/div[2]/form/div[4]/table/tbody/tr/td[2]')
@@ -112,9 +111,7 @@ def convert_csv():
 
     for add_result_stdNum in result_stdNum:
         late_stdNum.append(add_result_stdNum)
-    # print(late_stdNum)
 
-    # Test -------------
     return late_std
 
 
@@ -132,11 +129,9 @@ ansA = testA
 
 # --------  Start get arrival time --------
 
-geting_arrivalStd = input("Do you want to start to get arrival time?   Y / y  :")
-
-if geting_arrivalStd == "Y" or geting_arrivalStd == "y":
-    driver.get("https://sdms.dysh.tyc.edu.tw/school/Roll_Call/admin/RC/Roll_Call2?title=%u9ede%u540d%u7ba1%u7406")
-    sleep(1)
+sleep(3)
+print("3秒後跳到抓到校時間頁面.....")
+driver.get("https://sdms.dysh.tyc.edu.tw/school/Roll_Call/admin/RC/Roll_Call2?title=%u9ede%u540d%u7ba1%u7406")
 
 
 arrivalTime = []
@@ -157,36 +152,31 @@ def get_arrivalTime():
         arrivalTime.remove('')
     if '' in arrivalStdnum:
         arrivalStdnum.remove('')
+    
 
 
 def convert_ArrivalCsv():
     df_arrivalStd = pd.DataFrame({'Number': arrivalStdnum, 'arrivalTime': arrivalTime})
     sleep(1)
     df_arrivalStd = df_arrivalStd.reset_index(drop=True)
-    #print(df_arrivalStd)    
-    #print("-- -- --- --- - - - --")
-
-
-    #print("This is late_stdNum ")
-    #print(late_stdNum)
 
 
 
     fillter_data = df_arrivalStd[df_arrivalStd['Number'].isin(late_stdNum)]
     fillter_data = fillter_data.reset_index(drop=True)
     
-    #print("")
-    #print("---- This is arrival time ----")
-    #print(fillter_data)
 
     return fillter_data
 
 
-
+geting_arrivalStd = input("是否開始抓取到校時間?  Y / y :")
+num = 1
 while geting_arrivalStd == "y" or geting_arrivalStd == "Y":
     sleep(1)
     get_arrivalTime()
-    geting_arrivalStd = input("Do you want to continue to get arrival time?  Y / y :")
+    print("已抓取完第"+str(num)+"個班級......")
+    num = num + 1
+    geting_arrivalStd = input("是否開始抓取到校時間?  Y / y :")
 
 
 
