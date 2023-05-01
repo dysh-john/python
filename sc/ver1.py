@@ -3,6 +3,8 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 import pandas as pd
+import tkinter as tk
+from tkinter import messagebox
 from time import sleep
 
 
@@ -18,12 +20,16 @@ driver = webdriver.Chrome(service=s)
 driver.get("https://sdms.dysh.tyc.edu.tw/school/roll_call_landing")
 
 
+# Ask yes or no using tk
+ask_login_tk = messagebox.askyesno(
+    title = "Ask yes or no",
+    message = "你登入完了嗎?",
+    detail = "Click NO to quit"
+)
+if not ask_login_tk:
+    exit()
 
-ask_login = input("你登入完了嗎? (Y/y):")
-if ask_login == "y" or ask_login == "Y":
-    program_author = "yeh-john"
-else:
-    quit()
+
 
 sleep(1)
 driver.get("https://sdms.dysh.tyc.edu.tw/school/Roll_Call/Admin/RC/RC_card?title=%u5237%u5361%u9ede%u540dz")
