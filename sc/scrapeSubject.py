@@ -23,9 +23,7 @@ if (rowName != "" or subject != ""):
     print("")
 
     file_name = input("Please enter the file name to save :")
-    filter_df.to_csv(file_name)
+    filter_df.reset_index(drop=True).to_csv(file_name)
 else:
     print("ERROR")
     print("Please enter text...")
-
-
